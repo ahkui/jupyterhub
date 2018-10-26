@@ -1,0 +1,61 @@
+version: '3'
+
+networks:
+  share:
+    external:
+      name: all-apps
+  proxy:
+    external:
+      name: proxy-network
+
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${JUPYTERHUB_POSTGRES_DB}
+      - POSTGRES_USER=${JUPYTERHUB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${JUPYTERHUB_POSTGRES_PASSWORD}
+    entrypoint: /bin/sh -c
+    command: ["${JUPYTERHUB_INTERNAL_POSTGRES} && docker-entrypoint.sh postgres"]
+
+  jupyter:
+    build: ./jupyter
+    image: ahkui/jupyter:latest
+    ports:
+      - "8991:8888"
+
+  jupyterhub:
+    build: ./jupyterhub
+    image: ahkui/jupyterhub:latest  # goes to youruser DockerHub registry
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - ${DATA_PATH_HOST}/jupyterhub/data/:/data
+      - ${DATA_PATH_HOST}/jupyterhub/user-data/:/user-data
+    networks:
+      - default
+      - proxy
+      - share
+    ports:
+      - "${JUPYTERHUB_PORT}:80"
+    environment:
+      - TERM=xterm
+      - JUPYTERHUB_USER_DATA=${JUPYTERHUB_USER_DATA}
+      - JUPYTERHUB_POSTGRES_DB=${JUPYTERHUB_POSTGRES_DB}
+      - JUPYTERHUB_POSTGRES_USER=${JUPYTERHUB_POSTGRES_USER}
+      - JUPYTERHUB_POSTGRES_HOST=${JUPYTERHUB_POSTGRES_HOST}
+      - JUPYTERHUB_POSTGRES_PASSWORD=${JUPYTERHUB_POSTGRES_PASSWORD}
+      - JUPYTERHUB_OAUTH_CALLBACK_URL=${JUPYTERHUB_OAUTH_CALLBACK_URL}
+      - JUPYTERHUB_OAUTH_CLIENT_ID=${JUPYTERHUB_OAUTH_CLIENT_ID}
+      - JUPYTERHUB_OAUTH_CLIENT_SECRET=${JUPYTERHUB_OAUTH_CLIENT_SECRET}
+      - JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE=ahkui/jupyter
+      - JUPYTERHUB_NETWORK_NAME=${COMPOSE_PROJECT_NAME}_default
+      - JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
+    depends_on:
+      - postgres
+      - jupyter
+
+  jupyterhub-user:
+    build: ./jupyterhub-user
+    image: ahkui/jupyterhub-user:latest
