@@ -56,6 +56,3 @@ services:
       - postgres
       - jupyter
 
-  jupyterhub-user:
-    build: ./jupyterhub-user
-    image: ahkui/jupyterhub-user:latest
