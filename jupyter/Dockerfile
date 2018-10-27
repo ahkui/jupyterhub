@@ -11,11 +11,29 @@ RUN apk add --no-cache curl jq && \
 
 FROM nvidia/cuda
 
+COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
+
+RUN apt update && \
+    apt-get install \
+        build-essential \
+        libssl-dev \
+        git \
+    -y && \
+    git clone https://github.com/wg/wrk.git wrk && \
+    cd wrk && \
+    make -j 4 && \
+    mv wrk /usr/local/bin
+
+FROM nvidia/cuda
+ARG DEBIAN_FRONTEND=noninteractive
+
 LABEL maintainer="ahkui <ahkui@outlook.com>"
 
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
+COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
 # Pick up some TF dependencies
+#RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         cuda-command-line-tools-10-0 \
@@ -46,6 +64,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         openssh-server \
         vim \
+        nmap \
+        htop \
+        nmon \
+        iperf3 \
         && \
         apt-get install nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 && \
         apt-get update && \
