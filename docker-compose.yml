@@ -26,6 +26,14 @@ services:
     ports:
       - "8991:8888"
 
+  jupyter-proxy:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+    networks:
+      - default
+      - proxy
+
   jupyterhub:
     build: ./jupyterhub
     image: ahkui/jupyterhub:latest  # goes to youruser DockerHub registry

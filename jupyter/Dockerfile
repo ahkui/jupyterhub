@@ -1,6 +1,19 @@
 FROM nvidia/cuda
 
+FROM alpine
+
+COPY --from=0 /etc/apt/sources.list /etc/apt/sources.list
+
+RUN apk add --no-cache curl jq && \
+    export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d '"') && \
+    sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
+#"
+
+FROM nvidia/cuda
+
 LABEL maintainer="ahkui <ahkui@outlook.com>"
+
+COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
 # Pick up some TF dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,6 +40,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         rsync \
         software-properties-common \
         unzip \
+        iputils-ping \
+        net-tools \
+        netcat \
+        git \
+        openssh-server \
+        vim \
         && \
         apt-get install nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 && \
         apt-get update && \
@@ -48,6 +67,7 @@ RUN python2 -m pip --no-cache-dir install \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
         jupyterhub \
+        git+git://github.com/powerline/powerline \
         ${PIP} && \
     python2 -m ipykernel.kernelspec && \
     python3 -m ipykernel.kernelspec
@@ -77,12 +97,10 @@ COPY run_jupyter.sh /
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
-# TensorBoard
-EXPOSE 6006
-# IPython
-EXPOSE 8888
-
-WORKDIR "/notebooks"
+RUN cd ~ && \
+    git clone --depth=1 https://github.com/ahkui/.vim.git && \
+    ln -s -f ~/.vim/vimrc-basic ~/.vimrc && \
+    echo . /usr/local/lib/python3.6/dist-packages/powerline/bindings/bash/powerline.sh >> ~/.bashrc
 
 COPY start.sh /usr/local/bin/
 COPY start-notebook.sh /usr/local/bin/
@@ -91,7 +109,10 @@ RUN chmod +x /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start-notebook.sh
 RUN chmod +x /usr/local/bin/start-singleuser.sh
 
+EXPOSE 6006 8888
+
+WORKDIR "/notebooks"
+
 ENTRYPOINT ["tini", "--"]
 
 CMD ["start-notebook.sh"]
-#CMD ["/run_jupyter.sh", "--allow-root"]
