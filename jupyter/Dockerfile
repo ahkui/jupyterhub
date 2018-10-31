@@ -42,8 +42,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-curand-10-0 \
         cuda-cusolver-10-0 \
         cuda-cusparse-10-0 \
-        curl \
-        wget \
         libcudnn7=7.3.1.20-1+cuda10.0 \
         libnccl2=2.3.5-2+cuda10.0 \
         libfreetype6-dev \
@@ -56,7 +54,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 \
         python3-dev \
         rsync \
-        software-properties-common \
+        nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 \
+        && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        libnvinfer5=5.0.0-1+cuda10.0
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+        wget \
         unzip \
         iputils-ping \
         net-tools \
@@ -64,14 +69,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         openssh-server \
         vim \
-        nmap \
         htop \
+        nmap \
         nmon \
         iperf3 \
+        texlive-xetex \
+        latex-cjk-all \
         && \
-        apt-get install nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 && \
-        apt-get update && \
-        apt-get install libnvinfer5=5.0.0-1+cuda10.0 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -84,7 +88,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
     rm get-pip.py
 
-ARG PIP="Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4"
+ARG PIP="Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc "
 RUN python2 -m pip --no-cache-dir install \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
