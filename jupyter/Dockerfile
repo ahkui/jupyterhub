@@ -57,9 +57,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 \
         && \
     apt-get update && apt-get install -y --no-install-recommends \
-        libnvinfer5=5.0.0-1+cuda10.0
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
+        libnvinfer5=5.0.0-1+cuda10.0 \
+        && \
+    apt-get update && apt-get install -y --no-install-recommends \
         curl \
         wget \
         unzip \
@@ -73,8 +73,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nmap \
         nmon \
         iperf3 \
-        texlive-xetex \
-        latex-cjk-all \
+        texlive-full \
+        pandoc \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

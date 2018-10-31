@@ -23,6 +23,8 @@ services:
   jupyter:
     build: ./jupyter
     image: ahkui/jupyter:latest
+    environment:
+      - JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
     ports:
       - "8991:8888"
 
