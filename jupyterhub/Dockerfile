@@ -23,9 +23,7 @@ RUN npm install --no-cache -g \
         configurable-http-proxy \
     && python3 -m pip install --no-cache-dir \
         oauthenticator \
-        dockerspawner \
-        psycopg2 \
-        psycopg2-binary
+        dockerspawner
 
 COPY jupyterhub_config.py /root/.jupyter/ 
 COPY admin.txt /root/.jupyter/ 
