@@ -44,7 +44,7 @@ services:
       - ${DATA_PATH_HOST}/jupyterhub/data/:/data
       - ${DATA_PATH_HOST}/jupyterhub/user-data/:/user-data
       - ./jupyterhub/admin.txt:/root/.jupyter/admin.txt
-      - ./jupyterhub/shared.json:/root/.jupyter/shared.json
+      - ${JUPYTERHUB_SHARED_CONFIG}:/root/.jupyter/shared.json
     networks:
       - default
       - proxy
