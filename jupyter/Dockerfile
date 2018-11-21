@@ -42,8 +42,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-curand-10-0 \
         cuda-cusolver-10-0 \
         cuda-cusparse-10-0 \
-        libcudnn7=7.3.1.20-1+cuda10.0 \
-        libnccl2=2.3.5-2+cuda10.0 \
+        libcudnn7 \
+        libnccl2 \
         libfreetype6-dev \
         libhdf5-serial-dev \
         libpng-dev \
@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nvinfer-runtime-trt-repo-ubuntu1804-5.0.0-rc-cuda10.0 \
         && \
     apt-get update && apt-get install -y --no-install-recommends \
-        libnvinfer5=5.0.0-1+cuda10.0 \
+        libnvinfer5 \
         && \
     apt-get update && apt-get install -y --no-install-recommends \
         curl \
@@ -75,6 +75,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         iperf3 \
         texlive-full \
         pandoc \
+        p7zip-full \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

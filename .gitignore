@@ -1,3 +1,4 @@
 .env
 data
 *.swp
+jupyterhub/shared.json

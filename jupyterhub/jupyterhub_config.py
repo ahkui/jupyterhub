@@ -29,8 +29,31 @@ c.Spawner.pre_spawn_hook = create_dir_hook
 # avoid having to rebuild the JupyterHub container every time we change a
 # configuration parameter.
 
+from dockerspawner import DockerSpawner as _DockerSpawner
+import json
+
+shared_volumes = {}
+
+with open('/root/.jupyter/shared.json') as f:
+    shared_volumes = json.load(f)
+
+notebook_dir = '/notebooks'
+user_data = os.environ.get('JUPYTERHUB_USER_DATA','/jupyterhub')
+
+class DockerSpawner(_DockerSpawner):
+
+    def start(self):
+        print(self.volumes)    
+        if self.user.name in shared_volumes.keys():
+            for user in shared_volumes[self.user.name].keys():
+                self.volumes[os.path.join(user_data,user,shared_volumes[self.user.name][user])] = notebook_dir+'/'+user+'/'+shared_volumes[self.user.name][user]
+            pass
+        return super().start()
+        pass
+
+
 # Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
+c.JupyterHub.spawner_class = DockerSpawner
 
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ['JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE']
@@ -60,17 +83,17 @@ if 'true' == enable_nvidia:
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
 # notebook_dir = os.environ.get('JUPYTERHUB_DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
-notebook_dir = '/notebooks'
 c.DockerSpawner.notebook_dir = notebook_dir
 
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-user_data = os.environ.get('JUPYTERHUB_USER_DATA','/jupyterhub')
 c.DockerSpawner.volumes = {
     os.path.join(user_data,'{username}'): notebook_dir
 }
 
-c.DockerSpawner.extra_create_kwargs.update({ 'user': 'root'})
+c.DockerSpawner.name_template = os.environ.get('COMPOSE_PROJECT_NAME', "jupyter")+'-{username}'
+
+c.DockerSpawner.extra_create_kwargs.update({ 'user': 'root' })
 
 # volume_driver is no longer a keyword argument to create_container()
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })

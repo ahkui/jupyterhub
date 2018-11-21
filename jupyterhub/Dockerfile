@@ -26,6 +26,7 @@ RUN npm install --no-cache -g \
         dockerspawner
 
 COPY jupyterhub_config.py /root/.jupyter/ 
+COPY shared_example.json /root/.jupyter/shared.json
 COPY admin.txt /root/.jupyter/ 
 
 CMD ["sh", "-c", "jupyterhub upgrade-db && jupyterhub -f /root/.jupyter/jupyterhub_config.py"]
