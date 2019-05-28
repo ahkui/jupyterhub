@@ -53,7 +53,8 @@ class DockerSpawner(_DockerSpawner):
 
 
 # Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = DockerSpawner
+c.JupyterHub.spawner_class = _DockerSpawner
+# c.JupyterHub.spawner_class = DockerSpawner
 
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ['JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE']

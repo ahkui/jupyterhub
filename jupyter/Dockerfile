@@ -89,7 +89,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
     rm get-pip.py
 
-ARG PIP="psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc "
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc "
 RUN python2 -m pip --no-cache-dir install \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
