@@ -13,12 +13,6 @@ ENV JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE ${JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE}
 ENV JUPYTERHUB_ENABLE_NVIDIA ${JUPYTERHUB_ENABLE_NVIDIA}
 
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    apt update -yqq && apt-get install -y \
-        nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 RUN npm install --no-cache -g \
         configurable-http-proxy \
     && python3 -m pip install --no-cache-dir \

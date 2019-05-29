@@ -37,4 +37,5 @@ fi
 
 NOTEBOOK_ARGS="--allow-root --notebook-dir='/notebooks' $NOTEBOOK_ARGS"
 
-. /usr/local/bin/start.sh jupyterhub-singleuser $NOTEBOOK_ARGS $@
+# . /usr/local/bin/start.sh jupyterhub-singleuser $NOTEBOOK_ARGS $@
+. /usr/local/bin/start.sh jupyter-labhub $NOTEBOOK_ARGS $@

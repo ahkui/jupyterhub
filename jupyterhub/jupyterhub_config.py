@@ -6,6 +6,9 @@ import os
 
 c = get_config()
 
+# Use jupyterlab as default editor
+c.Spawner.default_url = '/lab'
+
 # create system users that don't exist yet
 c.LocalAuthenticator.create_system_users = True
 
