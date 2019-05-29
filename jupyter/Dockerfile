@@ -25,7 +25,11 @@ RUN apt update && \
     mv wrk /usr/local/bin
 
 FROM nvidia/cuda:10.0-devel
+
 ARG DEBIAN_FRONTEND=noninteractive
+
+ARG JUPYTERHUB_ENABLE_NVIDIA
+ENV JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
 
 LABEL maintainer="ahkui <ahkui@outlook.com>"
 

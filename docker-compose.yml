@@ -14,7 +14,10 @@ services:
     command: ["${JUPYTERHUB_INTERNAL_POSTGRES} && docker-entrypoint.sh postgres"]
 
   jupyter:
-    build: ./jupyter
+    build:
+      context: ./jupyter
+      args:
+        JUPYTERHUB_ENABLE_NVIDIA: ${JUPYTERHUB_ENABLE_NVIDIA}
     image: ahkui/jupyter:latest
     environment:
       - JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
