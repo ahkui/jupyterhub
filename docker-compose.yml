@@ -1,5 +1,12 @@
 version: '3'
 
+networks:
+  proxy-network:
+    external:
+      name: proxy-network
+  all-apps:
+    external:
+      name: all-apps
 
 services:
   postgres:
@@ -28,6 +35,9 @@ services:
     image: nginx:alpine
     volumes:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+    networks:
+      - default
+      - proxy-network
 
   jupyterhub:
     build: ./jupyterhub
@@ -57,4 +67,7 @@ services:
     depends_on:
       - postgres
       - jupyter
-
+    networks:
+      - default
+      - all-apps
+      - proxy-network
