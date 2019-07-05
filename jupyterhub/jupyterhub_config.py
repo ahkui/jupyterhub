@@ -128,7 +128,7 @@ data_dir = '/data'
 c.JupyterHub.cookie_secret_file = os.path.join(data_dir,
     'jupyterhub_cookie_secret')
 
-print(os.environ)
+c.JupyterHub.proxy_auth_token = '0082e2212f7a645dbde953daf3c8a23c5b034a9fabe37b34e40cca9c22c624b0'
 
 c.JupyterHub.db_url = 'postgresql://{user}:{password}@{host}/{db}'.format(
     user=os.environ['JUPYTERHUB_POSTGRES_USER'],

@@ -81,6 +81,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         texlive-full \
         pandoc \
         p7zip-full \
+        tree \
+        apache2 \
+        nginx \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -103,7 +106,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && apt-get install -y --no-install-recommends \
         nodejs
 
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter jupyterlab notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python "
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter jupyterlab notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django"
 RUN python2 -m pip --no-cache-dir install \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
@@ -158,11 +161,7 @@ RUN curl -O https://root.cern.ch/download/cling/cling_2019-05-28_ubuntu18.tar.bz
     python3 -m pip install -e . && \
     jupyter-kernelspec install cling-cpp11 && \
     jupyter-kernelspec install cling-cpp14 && \
-    jupyter-kernelspec install cling-cpp17 && \
-    jupyter-kernelspec install cling-cpp1z
-
-RUN python3 -m pip install jupyter-c-kernel && \
-    install_c_kernel
+    jupyter-kernelspec install cling-cpp17
 
 RUN jupyter labextension install @jupyterlab/hub-extension
 
@@ -178,7 +177,9 @@ ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
 RUN cd ~ && \
     git clone --depth=1 https://github.com/ahkui/.vim.git && \
-    ln -s -f ~/.vim/vimrc-basic ~/.vimrc && \
+    ln -s -f ~/.vim/vimrc-powerline ~/.vimrc && \
+    cd ~/.vim/ && \
+    ./install.sh && \
     echo . /usr/local/lib/python3.6/dist-packages/powerline/bindings/bash/powerline.sh >> ~/.bashrc
 
 COPY start.sh /usr/local/bin/
