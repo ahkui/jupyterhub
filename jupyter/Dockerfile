@@ -21,7 +21,7 @@ RUN apt update && \
     -y && \
     git clone https://github.com/wg/wrk.git wrk && \
     cd wrk && \
-    make -j 4 && \
+    make -j $(nproc) && \
     mv wrk /usr/local/bin
 
 FROM nvidia/cuda:10.0-devel
@@ -106,12 +106,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && apt-get install -y --no-install-recommends \
         nodejs
 
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter jupyterlab notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django"
+        # tornado==5.1.1 \
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django"
 RUN python2 -m pip --no-cache-dir install \
+        jupyterlab \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
-        tornado==5.1.1 \
+        tornado \
         jupyterhub \
+        jupyterlab==0.35.6 \
         git+git://github.com/powerline/powerline \
         ${PIP} && \
     python2 -m ipykernel.kernelspec && \
@@ -153,10 +156,12 @@ RUN add-apt-repository ppa:ondrej/php && \
     php ./jupyter-php-installer.phar install && \
     rm jupyter-php-installer.phar 
 
-RUN curl -O https://root.cern.ch/download/cling/cling_2019-05-28_ubuntu18.tar.bz2 && \
-    tar -xvf cling_2019-05-28_ubuntu18.tar.bz2 && \
-    rm cling_2019-05-28_ubuntu18.tar.bz2 && \
-    rsync -av ./cling_2019-05-28_ubuntu18/ /usr/ && \
+RUN export TODAY=$(date +'%Y-%m-%d') && \
+    echo $TODAY && \
+    curl -O https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
+    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 && \
+    rm cling_${TODAY}_ubuntu18.tar.bz2 && \
+    rsync -av ./cling_${TODAY}_ubuntu18/ /usr/ && \
     cd /usr/share/cling/Jupyter/kernel/ && \
     python3 -m pip install -e . && \
     jupyter-kernelspec install cling-cpp11 && \
