@@ -13,7 +13,7 @@ FROM nvidia/cuda:10.0-cudnn7-devel
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
 RUN apt update && \
-    apt-get install -yqq \
+    apt-get install -y \
         build-essential \
         libssl-dev \
         git \
@@ -35,7 +35,7 @@ LABEL maintainer="ahkui <ahkui@outlook.com>"
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
-RUN apt-get update && apt-get install -yqq --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common \
         build-essential \
         python \
@@ -84,7 +84,7 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 # Pick up some TF dependencies
-#RUN apt-get update && apt-get install -yqq --no-install-recommends apt-utils && \
+#RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
 RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
         cuda-command-line-tools-10-0 \
         cuda-cublas-10-0 \
@@ -101,7 +101,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -yqq --no-install-recommends --allow-change-held-packages \
+RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
         protobuf-compiler \
         libnvinfer5 \
         libprotobuf-dev \
@@ -116,7 +116,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends --allow-chang
         && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -yqq --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         caffe-cpu \
         && \
     apt-get clean \
@@ -125,7 +125,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
         && \
-    apt-get update && apt-get install -yqq --no-install-recommends \
+    apt-get update && apt-get install -y --no-install-recommends \
         nodejs \
         && \
     apt-get clean \
@@ -171,7 +171,7 @@ RUN npm install -g --unsafe-perm=true \
     rm -rf ~/.npm
 
 RUN add-apt-repository ppa:ondrej/php && \
-    apt-get update && apt-get install -yqq --no-install-recommends \
+    apt-get update && apt-get install -y --no-install-recommends \
         php7.3 \
         php7.3-fpm \
         php7.3-curl \
