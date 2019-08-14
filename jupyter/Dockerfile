@@ -133,14 +133,14 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     rm -rf /var/lib/apt/lists/*
 
         # tornado==5.1.1 \
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django"
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab"
 RUN python2 -m pip --no-cache-dir install \
-        jupyterlab \
+        # jupyterlab \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
         tornado==5.1.1 \
         jupyterhub \
-        jupyterlab==0.35.6 \
+        # jupyterlab==0.35.6 \
         git+git://github.com/powerline/powerline \
         ${PIP}
 
