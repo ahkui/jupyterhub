@@ -142,8 +142,9 @@ RUN python2 -m pip --no-cache-dir install \
         jupyterhub \
         jupyterlab==0.35.6 \
         git+git://github.com/powerline/powerline \
-        ${PIP} && \
-    python2 -m ipykernel.kernelspec && \
+        ${PIP}
+
+RUN python2 -m ipykernel.kernelspec && \
     python3 -m ipykernel.kernelspec
 
 RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
