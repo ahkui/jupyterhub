@@ -35,42 +35,16 @@ LABEL maintainer="ahkui <ahkui@outlook.com>"
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
-# Pick up some TF dependencies
-#RUN apt-get update && apt-get install -yqq --no-install-recommends apt-utils && \
-RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
+        software-properties-common \
         build-essential \
-        cuda-command-line-tools-10-0 \
-        cuda-cublas-10-0 \
-        cuda-cufft-10-0 \
-        cuda-curand-10-0 \
-        cuda-cusolver-10-0 \
-        cuda-cusparse-10-0 \
-        libnccl2 \
-        libfreetype6-dev \
-        libhdf5-serial-dev \
-        libpng-dev \
-        libzmq3-dev \
-        pkg-config \
         python \
         python-dev \
         python3 \
         python3-dev \
+        pkg-config \
         rsync \
         cmake \
-        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
-        && \
-    apt-get clean \
-        && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -yqq --no-install-recommends \
-        libnvinfer5 \
-        && \
-    apt-get clean \
-        && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -yqq --no-install-recommends \
         curl \
         wget \
         unzip \
@@ -90,15 +64,9 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
         tree \
         apache2 \
         nginx \
-        libprotobuf-dev \
-        protobuf-compiler \
-        libopencv-dev \
-        libgoogle-glog-dev \
-        libboost-all-dev \
-        libcaffe-cuda-dev \
-        libhdf5-dev \
-        libatlas-base-dev \
-        caffe-cpu \
+        libpng-dev \
+        libzmq3-dev \
+        libpq-dev \
         && \
     git config --global credential.helper store \
         && \
@@ -115,11 +83,47 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
     rm get-pip.py
 
-RUN apt-get update && apt-get install -yqq --no-install-recommends \
-        software-properties-common \
-        libpq-dev \
+# Pick up some TF dependencies
+#RUN apt-get update && apt-get install -yqq --no-install-recommends apt-utils && \
+RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
+        cuda-command-line-tools-10-0 \
+        cuda-cublas-10-0 \
+        cuda-cufft-10-0 \
+        cuda-curand-10-0 \
+        cuda-cusolver-10-0 \
+        cuda-cusparse-10-0 \
+        libnccl2 \
+        libfreetype6-dev \
+        libhdf5-serial-dev \
+        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
         && \
-    curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -yqq --no-install-recommends --allow-change-held-packages \
+        protobuf-compiler \
+        libnvinfer5 \
+        libprotobuf-dev \
+        libopencv-dev \
+        libgoogle-glog-dev \
+        libboost-all-dev \
+        libcaffe-cuda-dev \
+        libhdf5-dev \
+        libatlas-base-dev \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
+        caffe-cpu \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
         && \
     apt-get update && apt-get install -yqq --no-install-recommends \
         nodejs \
