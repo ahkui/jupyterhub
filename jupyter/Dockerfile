@@ -59,10 +59,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         cmake \
         nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
         && \
-    apt-get update && apt-get install -yqq --no-install-recommends \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
         libnvinfer5 \
         && \
-    apt-get update && apt-get install -yqq --no-install-recommends \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
         curl \
         wget \
         unzip \
