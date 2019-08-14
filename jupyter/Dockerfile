@@ -221,9 +221,14 @@ ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
 RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
         && \
+    mkdir build \
+        && \
     cd build \
         && \
     cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. && make -j`nproc`
+
+ENV PATH /usr/local/python:$PATH
+
 
 RUN cd ~ && \
     git clone --depth=1 https://github.com/ahkui/.vim.git && \
