@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-devel
+FROM nvidia/cuda:10.0-cudnn7-devel
 
 FROM alpine
 
@@ -8,7 +8,7 @@ RUN apk add --no-cache curl jq && \
     export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d '"') && \
     sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
 
-FROM nvidia/cuda:10.0-devel
+FROM nvidia/cuda:10.0-cudnn7-devel
 
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
@@ -23,7 +23,7 @@ RUN apt update && \
     make -j $(nproc) && \
     mv wrk /usr/local/bin
 
-FROM nvidia/cuda:10.0-devel
+FROM nvidia/cuda:10.0-cudnn7-devel
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -45,7 +45,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         cuda-curand-10-0 \
         cuda-cusolver-10-0 \
         cuda-cusparse-10-0 \
-        libcudnn7 \
         libnccl2 \
         libfreetype6-dev \
         libhdf5-serial-dev \
@@ -83,6 +82,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         tree \
         apache2 \
         nginx \
+        libprotobuf-dev \
+        protobuf-compiler \
+        libopencv-dev \
+        libgoogle-glog-dev \
+        libboost-all-dev \
+        libcaffe-cuda-dev \
+        libhdf5-dev \
+        libatlas-base-dev \
+        caffe-cpu \
         && \
     git config --global credential.helper store \
         && \
@@ -193,6 +201,12 @@ COPY notebooks /notebooks
 COPY run_jupyter.sh /
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+
+RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
+        && \
+    cd build \
+        && \
+    cmake -DBUILD_PYTHON=ON .. && make -j`nproc`
 
 RUN cd ~ && \
     git clone --depth=1 https://github.com/ahkui/.vim.git && \
