@@ -221,6 +221,8 @@ ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
 RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
         && \
+    cd openpose \
+        && \
     mkdir build \
         && \
     cd build \
