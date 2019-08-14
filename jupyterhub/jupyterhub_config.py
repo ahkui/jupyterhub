@@ -49,7 +49,7 @@ class DockerSpawner(_DockerSpawner):
         print(self.volumes)    
         if self.user.name in shared_volumes.keys():
             for user in shared_volumes[self.user.name].keys():
-                self.volumes[os.path.join(user_data,user,shared_volumes[self.user.name][user])] = notebook_dir+'/'+user+'/'+shared_volumes[self.user.name][user]
+                self.volumes[os.path.join(user_data,user,shared_volumes[self.user.name][user])] = notebook_dir+'/'+user+'/files/'+shared_volumes[self.user.name][user]
             pass
         return super().start()
         pass
@@ -92,7 +92,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
 c.DockerSpawner.volumes = {
-    os.path.join(user_data,'{username}'): notebook_dir
+    os.path.join(user_data,'{username}','files'): notebook_dir
 }
 
 c.DockerSpawner.name_template = os.environ.get('COMPOSE_PROJECT_NAME', "jupyter")+'-{username}'

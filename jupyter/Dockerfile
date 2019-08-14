@@ -14,11 +14,11 @@ FROM nvidia/cuda:10.0-devel
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
 RUN apt update && \
-    apt-get install \
+    apt-get install -yqq \
         build-essential \
         libssl-dev \
         git \
-    -y && \
+        && \
     git clone https://github.com/wg/wrk.git wrk && \
     cd wrk && \
     make -j $(nproc) && \
@@ -37,7 +37,7 @@ COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
 # Pick up some TF dependencies
-#RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
+#RUN apt-get update && apt-get install -yqq --no-install-recommends apt-utils && \
 RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
         build-essential \
         cuda-command-line-tools-10-0 \
@@ -61,10 +61,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         cmake \
         nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
         && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -yqq --no-install-recommends \
         libnvinfer5 \
         && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -yqq --no-install-recommends \
         curl \
         wget \
         unzip \
@@ -85,7 +85,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         apache2 \
         nginx \
         && \
-    apt-get clean && \
+    apt-get clean \
+        && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini && \
@@ -97,14 +98,18 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     python2 get-pip.py && \
     rm get-pip.py
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
         software-properties-common \
         libpq-dev \
         && \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-    && \
-    apt-get update && apt-get install -y --no-install-recommends \
-        nodejs
+        && \
+    apt-get update && apt-get install -yqq --no-install-recommends \
+        nodejs \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
 
         # tornado==5.1.1 \
 ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django"
@@ -112,7 +117,7 @@ RUN python2 -m pip --no-cache-dir install \
         jupyterlab \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
-        tornado \
+        tornado==5.1.1 \
         jupyterhub \
         jupyterlab==0.35.6 \
         git+git://github.com/powerline/powerline \
@@ -136,12 +141,16 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
 ;fi
 
 RUN npm install -g --unsafe-perm=true \
+        @vue/cli \
+        @vue/cli-service-global \
         ijavascript \
         && \
-    ijsinstall
+    ijsinstall \
+        && \
+    rm -rf ~/.npm
 
 RUN add-apt-repository ppa:ondrej/php && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -yqq --no-install-recommends \
         php7.3 \
         php7.3-fpm \
         php7.3-curl \
@@ -154,7 +163,11 @@ RUN add-apt-repository ppa:ondrej/php && \
     composer global require hirak/prestissimo && \
     wget https://litipk.github.io/Jupyter-PHP-Installer/dist/jupyter-php-installer.phar && \
     php ./jupyter-php-installer.phar install && \
-    rm jupyter-php-installer.phar 
+    rm jupyter-php-installer.phar \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN export TODAY=$(date +'%Y-%m-%d') && \
     echo $TODAY && \
@@ -185,7 +198,9 @@ RUN cd ~ && \
     ln -s -f ~/.vim/vimrc-powerline ~/.vimrc && \
     cd ~/.vim/ && \
     ./install.sh && \
-    echo . /usr/local/lib/python3.6/dist-packages/powerline/bindings/bash/powerline.sh >> ~/.bashrc
+    echo . /usr/local/lib/python3.6/dist-packages/powerline/bindings/bash/powerline.sh >> ~/.bashrc && \
+    echo LC_ALL=C.UTF-8 >> ~/.bashrc && \
+    echo LANG=C.UTF-8 >> ~/.bashrc
 
 COPY start.sh /usr/local/bin/
 COPY start-notebook.sh /usr/local/bin/
