@@ -16,7 +16,7 @@ def create_dir_hook(spawner):
     username = spawner.user.name # get the username
     volume_path = os.path.join('/user-data', username)
     if not os.path.exists(volume_path):
-        # create a directory with umask 0755 
+        # create a directory with umask 0755
         # hub and container user must have the same UID to be writeable
         # still readable by other users on the system
         os.mkdir(volume_path, 0o755)
@@ -46,7 +46,7 @@ user_data = os.environ.get('JUPYTERHUB_USER_DATA','/jupyterhub')
 class DockerSpawner(_DockerSpawner):
 
     def start(self):
-        print(self.volumes)    
+        print(self.volumes)
         if self.user.name in shared_volumes.keys():
             for user in shared_volumes[self.user.name].keys():
                 self.volumes[os.path.join(user_data,user,shared_volumes[self.user.name][user])] = notebook_dir+'/'+user+'/files/'+shared_volumes[self.user.name][user]

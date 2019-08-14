@@ -7,7 +7,6 @@ COPY --from=0 /etc/apt/sources.list /etc/apt/sources.list
 RUN apk add --no-cache curl jq && \
     export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d '"') && \
     sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
-#"
 
 FROM nvidia/cuda:10.0-devel
 
@@ -84,6 +83,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         tree \
         apache2 \
         nginx \
+        && \
+    git config --global credential.helper store \
         && \
     apt-get clean \
         && \
