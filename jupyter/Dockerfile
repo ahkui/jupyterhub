@@ -145,9 +145,9 @@ RUN python2 -m pip --no-cache-dir install \
         ${PIP}
 
 RUN python2 -m pip --no-cache-dir install \
-        prompt-toolkit==1.0.15 && \
+        prompt-toolkit==1.0.16 && \
     python3 -m pip --no-cache-dir install \
-        prompt-toolkit==1.0.15
+        prompt-toolkit==1.0.16
 
 RUN python2 -m ipykernel.kernelspec && \
     python3 -m ipykernel.kernelspec
