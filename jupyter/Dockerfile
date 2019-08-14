@@ -206,7 +206,7 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     cd build \
         && \
-    cmake -DBUILD_PYTHON=ON .. && make -j`nproc`
+    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. && make -j`nproc`
 
 RUN cd ~ && \
     git clone --depth=1 https://github.com/ahkui/.vim.git && \
