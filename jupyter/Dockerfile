@@ -33,7 +33,9 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     rm -rf /var/lib/apt/lists/* \
 ;fi
 
-RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
+RUN cd /openpose/build \
+    && \
+if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     cmake -DBUILD_PYTHON=ON .. || true \
 ;else \
     cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. || true \
