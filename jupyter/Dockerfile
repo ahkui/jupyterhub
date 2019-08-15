@@ -199,7 +199,7 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
             && \
         sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
             && \
-        sed -i "359i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+        sed -i "358i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
             && \
         cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
     ;fi \
