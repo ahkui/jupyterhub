@@ -171,7 +171,7 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
 ;fi
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-ENV PATH /usr/local/python:$PATH
+ENV PYTHONPATH /usr/local/python:$PYTHONPATH
 
 ARG OPENPOSE_MODELS_PROVIDER=http://posefs1.perception.cs.cmu.edu/OpenPose/models/
 RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
@@ -198,9 +198,9 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. || true \
     ;fi \
         && \
-    sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+    sed -i "362i }" ../3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
-    sed -i "358i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+    sed -i "358i {" ../3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
     if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
         cmake -DBUILD_PYTHON=ON .. \
