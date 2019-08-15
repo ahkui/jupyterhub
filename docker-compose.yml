@@ -9,6 +9,14 @@ networks:
       name: all-apps
 
 services:
+  frp:
+    build:
+      context: ./frp
+    volumes:
+      - ${DATA_PATH_HOST}/frp/config:/root/frp/config
+    entrypoint: /root/frp/frps
+    command: -c /root/frp/config/server.ini
+
   postgres:
     image: postgres
     volumes:
