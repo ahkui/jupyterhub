@@ -117,13 +117,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        caffe-cpu \
-        && \
-    apt-get clean \
-        && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
         && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -133,26 +126,19 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
         && \
     rm -rf /var/lib/apt/lists/*
 
-        # tornado==5.1.1 \
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab"
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab prompt-toolkit==1.0.16"
 RUN python2 -m pip --no-cache-dir install \
-        # jupyterlab \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
         tornado==5.1.1 \
         jupyterhub \
-        # jupyterlab==0.35.6 \
         git+git://github.com/powerline/powerline \
         ${PIP}
-
-RUN python2 -m pip --no-cache-dir install \
-        prompt-toolkit==1.0.16 && \
-    python3 -m pip --no-cache-dir install \
-        prompt-toolkit==1.0.16
 
 RUN python2 -m ipykernel.kernelspec && \
     python3 -m ipykernel.kernelspec
 
+################### need check gpu area start ###################
 RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     # run the install
     python2 -m pip --no-cache-dir install \
@@ -167,6 +153,64 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     python3 -m pip --no-cache-dir install \
         tensorflow \
 ;fi
+
+RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
+    apt-get update && apt-get install -y --no-install-recommends \
+        caffe-cuda \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/* \
+;else \
+    apt-get update && apt-get install -y --no-install-recommends \
+        caffe-cpu \
+        && \
+    apt-get clean \
+        && \
+    rm -rf /var/lib/apt/lists/* \
+;fi
+
+ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
+ENV PATH /usr/local/python:$PATH
+
+ARG OPENPOSE_MODELS_PROVIDER=http://posefs1.perception.cs.cmu.edu/OpenPose/models/
+RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
+        && \
+    cd openpose \
+        && \
+    git submodule update --init --recursive \
+        && \
+    cd models \
+        && \
+    ls \
+        && \
+    sed -i "s,http://posefs1.perception.cs.cmu.edu/OpenPose/models/,$OPENPOSE_MODELS_PROVIDER,g" getModels.sh \
+        && \
+    ./getModels.sh \
+        && \
+    mkdir build \
+        && \
+    cd build \
+        && \
+    tree 3rdparty/caffe \
+        && \
+    tree 3rdparty/caffe | grep mkldnn \
+        && \
+    if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
+        cmake -DBUILD_PYTHON=ON .. \
+    ;else \
+        cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
+            && \
+        sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+            && \
+        sed -i "359i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+    ;fi \
+        && \
+    make -j`nproc` \
+        && \
+    make install
+
+################### need check gpu area end ###################
 
 RUN npm install -g --unsafe-perm=true \
         @vue/cli \
@@ -208,7 +252,7 @@ RUN export TODAY=$(date +'%Y-%m-%d') && \
     jupyter-kernelspec install cling-cpp14 && \
     jupyter-kernelspec install cling-cpp17
 
-RUN jupyter labextension install @jupyterlab/hub-extension
+# RUN jupyter labextension install @jupyterlab/hub-extension
 
 RUN ln -s -f /usr/bin/python3 /usr/bin/python
 
@@ -217,47 +261,6 @@ COPY jupyter_notebook_config.py /root/.jupyter/
 COPY notebooks /notebooks
 
 COPY run_jupyter.sh /
-
-ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-
-ARG OPENPOSE_MODELS_PROVIDER=http://posefs1.perception.cs.cmu.edu/OpenPose/models/
-
-RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
-        && \
-    cd openpose \
-        && \
-    git submodule update --init --recursive \
-        && \
-    cd models \
-        && \
-    ls \
-        && \
-    sed -i "s,http://posefs1.perception.cs.cmu.edu/OpenPose/models/,$OPENPOSE_MODELS_PROVIDER,g" getModels.sh \
-        && \
-    ./getModels.sh \
-        && \
-    mkdir build \
-        && \
-    cd build \
-        && \
-    tree 3rdparty/caffe \
-        && \
-    tree 3rdparty/caffe | grep mkldnn \
-        && \
-    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
-    #     && \
-    # make -j`nproc` || true \
-        && \
-    sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
-        && \
-    sed -i "359i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
-        && \
-    make -j`nproc` \
-        && \
-    make install
-
-ENV PATH /usr/local/python:$PATH
-
 
 RUN cd ~ && \
     git clone --depth=1 https://github.com/ahkui/.vim.git && \
