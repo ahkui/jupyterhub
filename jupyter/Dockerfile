@@ -182,11 +182,11 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     cd models \
         && \
-    ls \
-        && \
     sed -i "s,http://posefs1.perception.cs.cmu.edu/OpenPose/models/,$OPENPOSE_MODELS_PROVIDER,g" getModels.sh \
         && \
     ./getModels.sh \
+        && \
+    cd .. \
         && \
     mkdir build \
         && \
