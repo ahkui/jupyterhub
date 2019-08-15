@@ -44,7 +44,6 @@ services:
       context: ./jupyter
       args:
         JUPYTERHUB_ENABLE_NVIDIA: 'false'
-        OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:cpu
     command: exit 1
     depends_on:
@@ -55,7 +54,6 @@ services:
       context: ./jupyter
       args:
         JUPYTERHUB_ENABLE_NVIDIA: 'true'
-        OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:gpu
     command: exit 1
     depends_on:
