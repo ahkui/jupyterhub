@@ -236,8 +236,6 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     ./getModels.sh \
         && \
-    ca .. \
-        && \
     mkdir build \
         && \
     cd build \
