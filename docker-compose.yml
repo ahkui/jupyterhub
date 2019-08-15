@@ -12,10 +12,10 @@ services:
   frp:
     build:
       context: ./frp
-    volumes:
-      - ${DATA_PATH_HOST}/frp/config:/root/frp/config
     entrypoint: /root/frp/frps
-    command: -c /root/frp/config/server.ini
+    command: -c /root/frp/frps.ini
+    ports:
+      - "8998:7000"
 
   postgres:
     image: postgres

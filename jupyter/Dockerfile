@@ -7,6 +7,7 @@ COPY --from=0 /etc/apt/sources.list /etc/apt/sources.list
 RUN apk add --no-cache curl jq && \
     export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d '"') && \
     sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
+#"
 
 FROM nvidia/cuda:10.0-cudnn7-devel
 
@@ -233,7 +234,7 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     sed -i "s,http://posefs1.perception.cs.cmu.edu/OpenPose/models/,$OPENPOSE_MODELS_PROVIDER,g" getModels.sh \
         && \
-    getModels.sh \
+    ./getModels.sh \
         && \
     ca .. \
         && \
