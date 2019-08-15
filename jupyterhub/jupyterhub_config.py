@@ -61,6 +61,13 @@ c.JupyterHub.spawner_class = _DockerSpawner
 
 # Spawn containers from this image
 c.DockerSpawner.image = os.environ['JUPYTERHUB_LOCAL_NOTEBOOK_IMAGE']
+if c.DockerSpawner.image == '':
+    c.DockerSpawner.image = 'ahkui/jupyter:cpu'
+    if 'true' == os.environ.get('JUPYTERHUB_ENABLE_NVIDIA','false'):
+        c.DockerSpawner.image = 'ahkui/jupyter:gpu'
+        pass
+    pass
+
 
 # JupyterHub requires a single-user instance of the Notebook server, so we
 # default to using the `start-singleuser.sh` script included in the
@@ -75,10 +82,9 @@ network_name = os.environ.get('JUPYTERHUB_NETWORK_NAME','laradock_backend')
 c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 
-enable_nvidia = os.environ.get('JUPYTERHUB_ENABLE_NVIDIA','false')
 # Pass the network name as argument to spawned containers
 c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
-if 'true' == enable_nvidia:
+if 'true' == os.environ.get('JUPYTERHUB_ENABLE_NVIDIA','false'):
     c.DockerSpawner.extra_host_config = { 'network_mode': network_name, 'runtime': 'nvidia' }
     pass
 # c.DockerSpawner.extra_host_config = { 'network_mode': network_name, "devices":["/dev/nvidiactl","/dev/nvidia-uvm","/dev/nvidia0"] }

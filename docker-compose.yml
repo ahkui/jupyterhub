@@ -32,13 +32,22 @@ services:
     build:
       context: ./jupyter
       args:
-        JUPYTERHUB_ENABLE_NVIDIA: ${JUPYTERHUB_ENABLE_NVIDIA}
         OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:latest
-    environment:
-      - JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
+    command: exit 1
 #    ports:
 #      - "8991:8888"
+
+  jupyter-cpu:
+    build:
+      context: ./jupyter
+      args:
+        JUPYTERHUB_ENABLE_NVIDIA: 'false'
+        OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
+    image: ahkui/jupyter:cpu
+    command: exit 1
+    depends_on:
+      - jupyter
 
   jupyter-gpu:
     build:
@@ -47,9 +56,9 @@ services:
         JUPYTERHUB_ENABLE_NVIDIA: 'true'
         OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:gpu
-    environment:
-      - JUPYTERHUB_ENABLE_NVIDIA='true'
     command: exit 1
+    depends_on:
+      - jupyter
 
   jupyter-proxy:
     image: nginx:alpine
