@@ -7,6 +7,8 @@ RUN apk add --no-cache \
         && \
     wget https://github.com/fatedier/frp/releases/download/v0.28.2/frp_0.28.2_linux_amd64.tar.gz -O frp.tar.gz \
         && \
+    mkdir frp \
+        && \
     tar xvzf frp.tar.gz -C frp \
         && \
     rm frp.tar.gz \
