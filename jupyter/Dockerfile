@@ -225,21 +225,27 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     git submodule update --init --recursive \
         && \
-    mkdir build \
+    ./models/getModels.sh
+
+RUN mkdir build \
         && \
     cd build \
         && \
     cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
         && \
-        tree 3rdparty/caffe \
+    tree 3rdparty/caffe \
         && \
-        tree 3rdparty/caffe | grep mkldnn \
+    tree 3rdparty/caffe | grep mkldnn \
+        && \
+    make -j`nproc` || true \
         && \
     sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
     sed -i "359i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
-    make -j`nproc`
+    make -j`nproc` \
+        && \
+    make install
 
 ENV PATH /usr/local/python:$PATH
 
