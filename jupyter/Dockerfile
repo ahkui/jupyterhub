@@ -193,14 +193,18 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
     cd build \
         && \
     if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
-        cmake -DBUILD_PYTHON=ON .. \
+        cmake -DBUILD_PYTHON=ON .. || true \
     ;else \
         cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. || true \
-            && \
-        sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
-            && \
-        sed -i "358i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
-            && \
+    ;fi \
+        && \
+    sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+        && \
+    sed -i "358i {" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
+        && \
+    if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
+        cmake -DBUILD_PYTHON=ON .. \
+    ;else \
         cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
     ;fi \
         && \
