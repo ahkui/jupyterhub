@@ -25,6 +25,7 @@ services:
       context: ./jupyter
       args:
         JUPYTERHUB_ENABLE_NVIDIA: ${JUPYTERHUB_ENABLE_NVIDIA}
+        OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:latest
     environment:
       - JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}

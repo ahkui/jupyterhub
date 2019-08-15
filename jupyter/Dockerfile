@@ -219,11 +219,15 @@ COPY run_jupyter.sh /
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
+ARG OPENPOSE_MODELS_PROVIDER=http://posefs1.perception.cs.cmu.edu/OpenPose/models/
+
 RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose.git \
         && \
     cd openpose \
         && \
     git submodule update --init --recursive \
+        && \
+    sed -i "s,http://posefs1.perception.cs.cmu.edu/OpenPose/models/,$OPENPOSE_MODELS_PROVIDER,g" getModels.sh \
         && \
     ./models/getModels.sh
 
