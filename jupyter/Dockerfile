@@ -266,8 +266,8 @@ RUN cd ~ && \
     cd ~/.vim/ && \
     ./install.sh && \
     echo . /usr/local/lib/python3.6/dist-packages/powerline/bindings/bash/powerline.sh >> ~/.bashrc && \
-    echo LC_ALL=C.UTF-8 >> ~/.bashrc && \
-    echo LANG=C.UTF-8 >> ~/.bashrc
+    echo export LC_ALL=C.UTF-8 >> ~/.bashrc && \
+    echo export LANG=C.UTF-8 >> ~/.bashrc
 
 COPY start.sh /usr/local/bin/
 COPY start-notebook.sh /usr/local/bin/
