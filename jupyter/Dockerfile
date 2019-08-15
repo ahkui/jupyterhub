@@ -126,7 +126,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
         && \
     rm -rf /var/lib/apt/lists/*
 
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab prompt-toolkit==1.0.16"
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel==4.10.1 jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab"
 RUN python2 -m pip --no-cache-dir install \
         ${PIP} && \
     python3 -m pip --no-cache-dir install \
@@ -191,10 +191,6 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
     mkdir build \
         && \
     cd build \
-        && \
-    tree 3rdparty/caffe \
-        && \
-    tree 3rdparty/caffe | grep mkldnn \
         && \
     if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
         cmake -DBUILD_PYTHON=ON .. \
