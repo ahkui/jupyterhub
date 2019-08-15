@@ -239,13 +239,13 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     cd build \
         && \
-    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
-        && \
     tree 3rdparty/caffe \
         && \
     tree 3rdparty/caffe | grep mkldnn \
         && \
-    make -j`nproc` || true \
+    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
+    #     && \
+    # make -j`nproc` || true \
         && \
     sed -i "362i }" 3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
