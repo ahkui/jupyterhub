@@ -192,21 +192,17 @@ RUN git clone --depth=1 https://github.com/CMU-Perceptual-Computing-Lab/openpose
         && \
     cd build \
         && \
-    if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
-        cmake -DBUILD_PYTHON=ON .. || true \
-    ;else \
-        cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. || true \
-    ;fi \
+if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
+    cmake -DBUILD_PYTHON=ON .. || true \
+;else \
+    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. || true \
         && \
     sed -i "362i }" ../3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
     sed -i "358i {" ../3rdparty/caffe/src/caffe/layers/mkldnn_inner_product_layer.cpp \
         && \
-    if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
-        cmake -DBUILD_PYTHON=ON .. \
-    ;else \
-        cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
-    ;fi \
+    cmake -DBUILD_PYTHON=ON -DGPU_MODE=CPU_ONLY .. \
+;fi \
         && \
     make -j`nproc` \
         && \
@@ -254,7 +250,9 @@ RUN export TODAY=$(date +'%Y-%m-%d') && \
     jupyter-kernelspec install cling-cpp14 && \
     jupyter-kernelspec install cling-cpp17
 
-# RUN jupyter labextension install @jupyterlab/hub-extension
+RUN jupyter lab build \
+        && \ 
+    jupyter labextension install @jupyterlab/hub-extension
 
 RUN ln -s -f /usr/bin/python3 /usr/bin/python
 
