@@ -33,6 +33,7 @@ LABEL maintainer="ahkui <ahkui@outlook.com>"
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
+ENV PATH="/opt/cmake-3.14.2-Linux-x86_64/bin:${PATH}"
 RUN apt-get update && apt-get install -y --no-install-recommends \
         software-properties-common \
         build-essential \
@@ -42,7 +43,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-dev \
         pkg-config \
         rsync \
-        cmake \
         curl \
         wget \
         unzip \
@@ -70,7 +70,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && \
     apt-get clean \
         && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* \
+        && \
+    wget https://github.com/Kitware/CMake/releases/download/v3.14.2/cmake-3.14.2-Linux-x86_64.tar.gz \
+        && \
+    tar xzf cmake-3.14.2-Linux-x86_64.tar.gz -C /opt 
+        && \
+    rm cmake-3.14.2-Linux-x86_64.tar.gz
 
 RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini && \
     mv tini /usr/local/bin/tini && \
@@ -109,7 +115,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
         libcaffe-cuda-dev \
         libhdf5-dev \
         libatlas-base-dev \
-        doxygen \
         && \
     apt-get clean \
         && \
