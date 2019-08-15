@@ -4,14 +4,17 @@ FROM alpine
 WORKDIR /root
 RUN apk add --no-cache \
         wget \
+        tree \
         && \
     wget https://github.com/fatedier/frp/releases/download/v0.28.2/frp_0.28.2_linux_amd64.tar.gz -O frp.tar.gz \
         && \
-    mkdir frp \
+    mkdir frp temp \
         && \
-    tar cvzf frp.tar.gz -C frp \
+    tar cvzf frp.tar.gz -C temp \
         && \
-    rm frp.tar.gz \
+    mv temp/*/** frp/ \
         && \
-    ls
+    rm -rf frp.tar.gz temp \
+        && \
+    tree
 
