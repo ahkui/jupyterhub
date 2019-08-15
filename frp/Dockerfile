@@ -9,7 +9,7 @@ RUN apk add --no-cache \
         && \
     mkdir frp \
         && \
-    tar xvzf frp.tar.gz -C frp \
+    tar cvzf frp.tar.gz -C frp \
         && \
     rm frp.tar.gz \
         && \
