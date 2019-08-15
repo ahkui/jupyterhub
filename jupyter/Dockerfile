@@ -28,9 +28,6 @@ FROM nvidia/cuda:10.0-cudnn7-devel
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG JUPYTERHUB_ENABLE_NVIDIA=false
-ENV JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
-
 LABEL maintainer="ahkui <ahkui@outlook.com>"
 
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
@@ -139,6 +136,8 @@ RUN python2 -m ipykernel.kernelspec && \
     python3 -m ipykernel.kernelspec
 
 ################### need check gpu area start ###################
+ARG JUPYTERHUB_ENABLE_NVIDIA=false
+ENV JUPYTERHUB_ENABLE_NVIDIA=${JUPYTERHUB_ENABLE_NVIDIA}
 RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     # run the install
     python2 -m pip --no-cache-dir install \
