@@ -44,11 +44,11 @@ services:
     build:
       context: ./jupyter
       args:
-        JUPYTERHUB_ENABLE_NVIDIA: true
+        JUPYTERHUB_ENABLE_NVIDIA: 'true'
         OPENPOSE_MODELS_PROVIDER: https://openpose.ahkui.com/
     image: ahkui/jupyter:gpu
     environment:
-      - JUPYTERHUB_ENABLE_NVIDIA=true
+      - JUPYTERHUB_ENABLE_NVIDIA='true'
     command: exit 1
 
   jupyter-proxy:
