@@ -16,6 +16,7 @@ services:
     command: -c /root/frp/frps.ini
     ports:
       - "8998:7000"
+      - "8999:6379"
 
   postgres:
     image: postgres

@@ -20,6 +20,7 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
 RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
     apt-get update && apt-get install -y --no-install-recommends \
         caffe-cuda \
+        libcaffe-cuda-dev \
         && \
     apt-get clean \
         && \
@@ -27,6 +28,7 @@ RUN if [ ${JUPYTERHUB_ENABLE_NVIDIA} = true ]; then \
 ;else \
     apt-get update && apt-get install -y --no-install-recommends \
         caffe-cpu \
+        libcaffe-cpu-dev \
         && \
     apt-get clean \
         && \

@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-devel
+FROM nvidia/cuda:10.1-cudnn7-devel
 
 FROM alpine
 
@@ -9,7 +9,7 @@ RUN apk add --no-cache curl jq && \
     sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
 #"
 
-FROM nvidia/cuda:10.0-cudnn7-devel
+FROM nvidia/cuda:10.1-cudnn7-devel
 
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
@@ -24,7 +24,7 @@ RUN apt update && \
     make -j $(nproc) && \
     mv wrk /usr/local/bin
 
-FROM nvidia/cuda:10.0-cudnn7-devel
+FROM nvidia/cuda:10.1-cudnn7-devel
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -91,29 +91,25 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
 #RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
 RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
         cuda-command-line-tools-10-0 \
-        cuda-cublas-10-0 \
-        cuda-cufft-10-0 \
-        cuda-curand-10-0 \
-        cuda-cusolver-10-0 \
-        cuda-cusparse-10-0 \
+        libcublas10 \
+        libcublas-dev \
+        cuda-cufft-10-1 \
+        cuda-curand-10-1 \
+        cuda-cusolver-10-1 \
+        cuda-cusparse-10-1 \
         libnccl2 \
+        libnccl-dev \
         libfreetype6-dev \
-        libhdf5-serial-dev \
-        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
-        && \
-    apt-get clean \
-        && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
+#        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
         protobuf-compiler \
         libnvinfer5 \
+        libnvinfer-dev \
         libprotobuf-dev \
         libopencv-dev \
         libgoogle-glog-dev \
         libboost-all-dev \
-        libcaffe-cuda-dev \
         libhdf5-dev \
+        libhdf5-serial-dev \
         libatlas-base-dev \
         && \
     apt-get clean \
@@ -136,9 +132,9 @@ RUN python2 -m pip --no-cache-dir install \
         tornado==5.1.1 \
         jupyterhub \
         git+git://github.com/powerline/powerline \
-        ${PIP}
-
-RUN python3 -m ipykernel.kernelspec
+        ${PIP} \
+        && \
+    python3 -m ipykernel.kernelspec
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 ENV PYTHONPATH /usr/local/python:$PYTHONPATH
