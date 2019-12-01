@@ -83,7 +83,7 @@ c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 
 # Pass the network name as argument to spawned containers
-c.DockerSpawner.extra_host_config = { 'network_mode': network_name }
+c.DockerSpawner.extra_host_config = { 'network_mode': network_name , 'privileged': True }
 if 'true' == os.environ.get('JUPYTERHUB_ENABLE_NVIDIA','false'):
     c.DockerSpawner.extra_host_config = { 'network_mode': network_name, 'runtime': 'nvidia' }
     pass

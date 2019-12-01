@@ -5,9 +5,10 @@ FROM alpine
 COPY --from=0 /etc/apt/sources.list /etc/apt/sources.list
 
 RUN apk add --no-cache curl jq && \
-    export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d '"') && \
+    export COUNTRY=$(curl ipinfo.io | jq '.country' | tr -d "\"") && \
+    sed -i "s|http:\/\/security|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list && \
     sed -i "s|http:\/\/archive|http:\/\/$COUNTRY.archive|g" /etc/apt/sources.list
-#"
+
 
 FROM nvidia/cuda:10.1-cudnn7-devel
 

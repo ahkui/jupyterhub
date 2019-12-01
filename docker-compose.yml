@@ -15,8 +15,11 @@ services:
     entrypoint: /root/frp/frps
     command: -c /root/frp/frps.ini
     ports:
+      - "8989:8989"
       - "8998:7000"
       - "8999:6379"
+    networks:
+      - all-apps
 
   postgres:
     image: postgres
