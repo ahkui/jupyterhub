@@ -187,12 +187,13 @@ RUN add-apt-repository ppa:ondrej/php && \
 RUN export TODAY=$(date +'%Y-%m-%d') && \
     echo $TODAY && \
     echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
-    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q --show-progress || ( \
+    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q || { \
+    unset TODAY && \
     export TODAY=$(date -d 'yesterday'  +'%Y-%m-%d') && \
     echo $TODAY && \
     echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
-    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q --show-progress \
-    ) && \
+    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q \
+    ;} && \
     tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 && \
     rm cling_${TODAY}_ubuntu18.tar.bz2 && \
     rsync -av ./cling_${TODAY}_ubuntu18/ /usr/ && \
@@ -220,14 +221,17 @@ RUN jupyter labextension install \
     @jupyterlab/github \
     @jupyterlab/toc \
     @jupyterlab/google-drive \
-    @jupyterlab/metadata-extension \
     @jupyter-widgets/jupyterlab-manager \
     && \
     jupyter serverextension enable --py jupyterlab_git \
     && \
     jupyter serverextension enable --py jupyterlab_github \
-        && \
-    jupyter lab build
+    && \
+    jupyter lab clean \
+    && \
+    jupyter lab build || \
+    cat /tmp/jupyterlab-debug-*.log
+    
 
 RUN ln -s -f /usr/bin/python3 /usr/bin/python
 
