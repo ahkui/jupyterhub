@@ -185,14 +185,15 @@ RUN add-apt-repository ppa:ondrej/php && \
     rm -rf /var/lib/apt/lists/*
 
 RUN export TODAY=$(date +'%Y-%m-%d') && \
-    echo Today: $TODAY && \
-    curl -O https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
-    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 || ( \
-    rm cling_${TODAY}_ubuntu18.tar.bz2 && \
+    echo $TODAY && \
+    echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
+    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q --show-progress || ( \
     export TODAY=$(date -d 'yesterday'  +'%Y-%m-%d') && \
-    curl -O https://root.cern.ch/download/cling/cling_${YESTERDAY}_ubuntu18.tar.bz2 \
-    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 \
+    echo $TODAY && \
+    echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
+    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q --show-progress \
     ) && \
+    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 && \
     rm cling_${TODAY}_ubuntu18.tar.bz2 && \
     rsync -av ./cling_${TODAY}_ubuntu18/ /usr/ && \
     cd /usr/share/cling/Jupyter/kernel/ && \
