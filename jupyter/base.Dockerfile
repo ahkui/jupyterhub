@@ -185,9 +185,14 @@ RUN add-apt-repository ppa:ondrej/php && \
     rm -rf /var/lib/apt/lists/*
 
 RUN export TODAY=$(date +'%Y-%m-%d') && \
-    echo $TODAY && \
+    echo Today: $TODAY && \
     curl -O https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
-    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 && \
+    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 || ( \
+    rm cling_${TODAY}_ubuntu18.tar.bz2 && \
+    export TODAY=$(date -d 'yesterday'  +'%Y-%m-%d') && \
+    curl -O https://root.cern.ch/download/cling/cling_${YESTERDAY}_ubuntu18.tar.bz2 \
+    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 \
+    ) && \
     rm cling_${TODAY}_ubuntu18.tar.bz2 && \
     rsync -av ./cling_${TODAY}_ubuntu18/ /usr/ && \
     cd /usr/share/cling/Jupyter/kernel/ && \
