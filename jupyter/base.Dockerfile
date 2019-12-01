@@ -125,7 +125,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && \
     rm -rf /var/lib/apt/lists/*
 
-ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django jupyterlab"
+ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django selenium jupyterlab jupyterlab-git jupyterlab_github"
 RUN python2 -m pip --no-cache-dir install \
     ${PIP} && \
     python3 -m pip --no-cache-dir install \
@@ -207,9 +207,20 @@ RUN git clone --depth 1 https://github.com/SpencerPark/IJava.git && \
     cd IJava/ && \
     chmod u+x gradlew && ./gradlew installKernel
 
-RUN jupyter lab build \
+RUN jupyter labextension install \
+    @fissio/hub-topbar-buttons \
+    @jupyterlab/git \
+    @jupyterlab/github \
+    @jupyterlab/toc \
+    @jupyterlab/google-drive \
+    @jupyterlab/metadata-extension \
+    @jupyter-widgets/jupyterlab-manager \
     && \
-    jupyter labextension install @jupyterlab/hub-extension
+    jupyter serverextension enable --py jupyterlab_git \
+    && \
+    jupyter serverextension enable --py jupyterlab_github \
+        && \
+    jupyter lab build
 
 RUN ln -s -f /usr/bin/python3 /usr/bin/python
 
