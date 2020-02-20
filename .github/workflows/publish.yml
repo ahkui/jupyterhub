@@ -11,7 +11,6 @@ jobs:
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         dockerfile: /jupyter/base.Dockerfile
-        workdir: /jupyter
         name: ahkui/jupyter
         tags: latest
         username: ${{ secrets.DOCKERHUB_USERNAME }}
