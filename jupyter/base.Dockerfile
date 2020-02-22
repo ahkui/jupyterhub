@@ -15,14 +15,14 @@ FROM nvidia/cuda:10.1-cudnn7-devel
 COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 
 RUN apt update && \
-    apt-get install -y \
+    apt-get install -yqq \
     build-essential \
     libssl-dev \
     git \
     && \
     git clone https://github.com/wg/wrk.git wrk && \
     cd wrk && \
-    make -j $(nproc) && \
+    make --silent -j $(nproc) && \
     mv wrk /usr/local/bin
 
 FROM nvidia/cuda:10.1-cudnn7-devel
@@ -35,7 +35,7 @@ COPY --from=1 /etc/apt/sources.list /etc/apt/sources.list
 COPY --from=2 /usr/local/bin/wrk /usr/local/bin/wrk
 
 ENV PATH="/opt/cmake-3.14.2-Linux-x86_64/bin:${PATH}"
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
     software-properties-common \
     build-essential \
     python \
@@ -73,7 +73,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && \
     rm -rf /var/lib/apt/lists/* \
     && \
-    wget https://github.com/Kitware/CMake/releases/download/v3.14.2/cmake-3.14.2-Linux-x86_64.tar.gz \
+    wget --quiet https://github.com/Kitware/CMake/releases/download/v3.14.2/cmake-3.14.2-Linux-x86_64.tar.gz \
     && \
     tar xzf cmake-3.14.2-Linux-x86_64.tar.gz -C /opt \
     && \
@@ -89,19 +89,18 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 # Pick up some TF dependencies
-#RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
-RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
+#RUN apt-get update && apt-get install -yqq --no-install-recommends apt-utils && \
+RUN apt-get update && apt-get install -yqq --no-install-recommends --allow-change-held-packages \
     cuda-command-line-tools-10-0 \
-    libcublas10 \
     libcublas-dev \
     cuda-cufft-10-1 \
     cuda-curand-10-1 \
     cuda-cusolver-10-1 \
     cuda-cusparse-10-1 \
+    cuda-cublas-10-1 \
     libnccl2 \
     libnccl-dev \
     libfreetype6-dev \
-    #        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
     protobuf-compiler \
     libnvinfer5 \
     libnvinfer-dev \
@@ -119,7 +118,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -yqq --no-install-recommends \
     nodejs \
     && \
     apt-get clean \
@@ -166,7 +165,7 @@ RUN npm install -g --unsafe-perm=true \
     rm -rf ~/.npm
 
 RUN add-apt-repository ppa:ondrej/php && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -yqq --no-install-recommends \
     php7.3 \
     php7.3-fpm \
     php7.3-curl \
@@ -176,7 +175,7 @@ RUN add-apt-repository ppa:ondrej/php && \
     php composer-setup.php --install-dir=/usr/bin --filename=composer && \
     php -r "unlink('composer-setup.php');" && \
     composer global require hirak/prestissimo && \
-    wget https://litipk.github.io/Jupyter-PHP-Installer/dist/jupyter-php-installer.phar && \
+    wget --quiet https://litipk.github.io/Jupyter-PHP-Installer/dist/jupyter-php-installer.phar && \
     php ./jupyter-php-installer.phar install && \
     rm jupyter-php-installer.phar \
     && \
@@ -187,14 +186,14 @@ RUN add-apt-repository ppa:ondrej/php && \
 RUN export TODAY=$(date +'%Y-%m-%d') && \
     echo $TODAY && \
     echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
-    wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q || { \
+    wget --quiet -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 || { \
     unset TODAY && \
     export TODAY=$(date -d 'yesterday'  +'%Y-%m-%d') && \
     echo $TODAY && \
     echo https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 && \
     wget -L https://root.cern.ch/download/cling/cling_${TODAY}_ubuntu18.tar.bz2 -q \
     ;} && \
-    tar -xvf cling_${TODAY}_ubuntu18.tar.bz2 && \
+    tar -xf cling_${TODAY}_ubuntu18.tar.bz2 && \
     rm cling_${TODAY}_ubuntu18.tar.bz2 && \
     rsync -av ./cling_${TODAY}_ubuntu18/ /usr/ && \
     cd /usr/share/cling/Jupyter/kernel/ && \
@@ -205,10 +204,10 @@ RUN export TODAY=$(date +'%Y-%m-%d') && \
 
 ARG GRADLE_MAVEN=5.6.2
 ENV PATH=$PATH:/opt/gradle/gradle-$GRADLE_MAVEN/bin
-RUN apt update && apt install -y default-jdk maven && \
-    wget https://services.gradle.org/distributions/gradle-$GRADLE_MAVEN-bin.zip && \
+RUN apt update && apt install -yqq default-jdk maven && \
+    wget --quiet https://services.gradle.org/distributions/gradle-$GRADLE_MAVEN-bin.zip && \
     mkdir /opt/gradle && \
-    unzip -d /opt/gradle gradle-$GRADLE_MAVEN-bin.zip && \
+    unzip -qq -d /opt/gradle gradle-$GRADLE_MAVEN-bin.zip && \
     rm gradle-$GRADLE_MAVEN-bin.zip
 
 RUN git clone --depth 1 https://github.com/SpencerPark/IJava.git && \
@@ -259,7 +258,7 @@ RUN chmod +x /usr/local/bin/start-singleuser.sh
 
 EXPOSE 6006 8888
 
-WORKDIR "/notebooks"
+WORKDIR /notebooks
 
 ENTRYPOINT ["tini", "--"]
 
