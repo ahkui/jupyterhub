@@ -91,28 +91,28 @@ RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
 # Pick up some TF dependencies
 #RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && \
 RUN apt-get update && apt-get install -y --no-install-recommends --allow-change-held-packages \
-        cuda-command-line-tools-10-0 \
-        libcublas10 \
-        libcublas-dev \
-        cuda-cufft-10-1 \
-        cuda-curand-10-1 \
-        cuda-cusolver-10-1 \
-        cuda-cusparse-10-1 \
-        libnccl2 \
-        libnccl-dev \
-        libfreetype6-dev \
-#        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
-        protobuf-compiler \
-        libnvinfer5 \
-        libnvinfer-dev \
-        libprotobuf-dev \
-        libopencv-dev \
-        libgoogle-glog-dev \
-        libboost-all-dev \
-        libhdf5-dev \
-        libhdf5-serial-dev \
-        libatlas-base-dev \
-        && \
+    cuda-command-line-tools-10-0 \
+    libcublas10 \
+    libcublas-dev \
+    cuda-cufft-10-1 \
+    cuda-curand-10-1 \
+    cuda-cusolver-10-1 \
+    cuda-cusparse-10-1 \
+    libnccl2 \
+    libnccl-dev \
+    libfreetype6-dev \
+    #        nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda10.0 \
+    protobuf-compiler \
+    libnvinfer5 \
+    libnvinfer-dev \
+    libprotobuf-dev \
+    libopencv-dev \
+    libgoogle-glog-dev \
+    libboost-all-dev \
+    libhdf5-dev \
+    libhdf5-serial-dev \
+    libatlas-base-dev \
+    && \
     apt-get clean \
     && \
     rm -rf /var/lib/apt/lists/*
@@ -127,14 +127,14 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     rm -rf /var/lib/apt/lists/*
 
 ARG PIP="selenium psycopg2-binary psycopg2 Pillow h5py ipykernel jupyter notebook keras keras_applications keras_preprocessing matplotlib numpy pandas scipy sklearn Flask gunicorn pymongo redis requests ipyparallel bs4 nbconvert pandoc opencv-python django selenium jupyterlab jupyterlab-git jupyterlab_github"
-RUN python2 -m pip --no-cache-dir install \
-    ${PIP} && \
-    python3 -m pip --no-cache-dir install \
-        tornado==5.1.1 \
-        jupyterhub \
-        git+git://github.com/powerline/powerline \
-        ${PIP} \
-        && \
+# RUN python2 -m pip --no-cache-dir install \
+#     ${PIP} && \
+RUN python3 -m pip --no-cache-dir install \
+    tornado==5.1.1 \
+    jupyterhub \
+    git+git://github.com/powerline/powerline \
+    ${PIP} \
+    && \
     python3 -m ipykernel.kernelspec
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
@@ -231,7 +231,7 @@ RUN jupyter labextension install \
     && \
     jupyter lab build || \
     cat /tmp/jupyterlab-debug-*.log
-    
+
 
 RUN ln -s -f /usr/bin/python3 /usr/bin/python
 
